@@ -15,6 +15,7 @@
 		8F86B35B21E3B85E00379B5A /* ARAppTheFirstTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F86B35A21E3B85E00379B5A /* ARAppTheFirstTests.swift */; };
 		8F86B36621E3B85E00379B5A /* ARAppTheFirstUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F86B36521E3B85E00379B5A /* ARAppTheFirstUITests.swift */; };
 		8F86B37421E3BDAE00379B5A /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F86B37321E3BDAE00379B5A /* art.scnassets */; };
+		8FD4CDDA21E503170010D5CE /* OverlayPlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4CDD921E503170010D5CE /* OverlayPlane.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		8F86B36521E3B85E00379B5A /* ARAppTheFirstUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARAppTheFirstUITests.swift; sourceTree = "<group>"; };
 		8F86B36721E3B85E00379B5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8F86B37321E3BDAE00379B5A /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		8FD4CDD921E503170010D5CE /* OverlayPlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayPlane.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 			children = (
 				8F86B34521E3B83800379B5A /* AppDelegate.swift */,
 				8F86B34721E3B83800379B5A /* ViewController.swift */,
+				8FD4CDD921E503170010D5CE /* OverlayPlane.swift */,
 				8F86B34921E3B83800379B5A /* Main.storyboard */,
 				8F86B34C21E3B85E00379B5A /* Assets.xcassets */,
 				8F86B34E21E3B85E00379B5A /* LaunchScreen.storyboard */,
@@ -261,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F86B34821E3B83800379B5A /* ViewController.swift in Sources */,
+				8FD4CDDA21E503170010D5CE /* OverlayPlane.swift in Sources */,
 				8F86B34621E3B83800379B5A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
