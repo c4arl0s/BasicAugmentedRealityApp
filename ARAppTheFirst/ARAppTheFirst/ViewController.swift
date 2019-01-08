@@ -12,6 +12,7 @@ import SceneKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet weak var sceneView: ARSCNView!
+    var planes: [OverlayPlane]!
     
     override func viewDidLoad() {
     super.viewDidLoad()
@@ -28,7 +29,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
         let plane = OverlayPlane(planeAnchor: planeAnchor)
+        planes.append(plane)
         node.addChildNode(plane)
+    }
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        for plane in planes {
+            if planeAnchor.identifier == plane.planeAnchor.identifier {
+                plane.update(planeAnchor: planeAnchor)
+            }
+        }
     }
 }
 

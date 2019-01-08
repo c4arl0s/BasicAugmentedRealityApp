@@ -18,7 +18,11 @@ class OverlayPlane: SCNNode {
         super.init()
         setup()
     }
-    
+    func update(planeAnchor: ARPlaneAnchor) {
+        planeGeometry?.width = CGFloat(planeAnchor.extent.x)
+        planeGeometry?.height = CGFloat(planeAnchor.extent.z)
+        self.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -31,8 +35,9 @@ class OverlayPlane: SCNNode {
         let planeNode = SCNNode(geometry: planeGeometry)
         planeNode.position = SCNVector3Make(planeAnchor.center.x, 0.0, planeAnchor.center.z)
         
-//        planeNode.transform = SCNMatrix4MakeRotation(Float(-Float.pi/2), 1, 0, 0)
+        planeNode.transform = SCNMatrix4MakeRotation(Float(-Float.pi/2), 1, 0, 0)
         
         self.addChildNode(planeNode)
     }
+    
 }
