@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
     super.viewDidLoad()
     let configuration = ARWorldTrackingConfiguration()
-    sceneView.debugOptions = [.showWorldOrigin]
+    sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
     sceneView.showsStatistics = true
     sceneView.session.run(configuration,options:[])
     
@@ -46,26 +46,28 @@ class ViewController: UIViewController {
     textNodeForPlanetJupiter.position = SCNVector3Make(0.0, 1.5, -7.0)
     sceneView.scene.rootNode.addChildNode(textNodeForPlanetJupiter)
     
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
-//        sceneView.addGestureRecognizer(tapGesture)
-//
-//        let planet = createPlanet(radius: 0.4, textureName: "earth")
-//        planet.position = SCNVector3Make(0.0, 0.0, -0.1)
-//        sceneView.scene.rootNode.addChildNode(planet)
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
+    sceneView.addGestureRecognizer(tapGesture)
+
 
     }
     func loadScene() {
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         sceneView.scene = scene
     }
+
     @objc func tapped(recognizer: UIGestureRecognizer) {
         guard let view = recognizer.view as? ARSCNView else {return}
         let touchLocation = recognizer.location(in: view)
         let hitResults = view.hitTest(touchLocation, options: [:])
         if let hitResult = hitResults.first {
             let node = hitResult.node
-            let material = node.geometry?.material(named: "planetTexture")
-            material?.diffuse.contents = UIImage(named: "earth")
+            if node.name == "planet" {
+                let material = node.geometry?.material(named: "planetTexture")
+                material?.diffuse.contents = UIImage(named: "earth")
+            }
+            
+            
         }
         print("Tocamos la vista")
     }
@@ -98,6 +100,7 @@ class ViewController: UIViewController {
         let sphere = SCNSphere(radius: radius)
         let material = SCNMaterial()
         material.diffuse.contents = UIImage(named: textureName)
+        sphere.name = "planet"
         sphere.materials = [material]
         let sphereNode = SCNNode(geometry: sphere)
         return sphereNode
