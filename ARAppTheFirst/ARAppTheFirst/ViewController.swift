@@ -128,7 +128,10 @@ class ViewController: UIViewController {
         }
     }
     func createValve(x: Float = 0, y: Float = 0, z: Float = -1.0) {
-        guard let valveScene = SCNScene(named: "978NSP-200-JD-55M-16IP.dae") else { return }
+        guard let valveScene = SCNScene(named: "Art.scnassets/978NSP-200-JD-55M-16IP.dae") else {
+            print("I couldnt create the valveScene")
+            return
+        }
         let valveNode = SCNNode()
         let valveSceneChildNodes = valveScene.rootNode.childNodes
         
