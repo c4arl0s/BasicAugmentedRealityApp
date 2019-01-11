@@ -10,7 +10,7 @@ import UIKit
 import ARKit
 import SceneKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController {
     @IBOutlet weak var sceneView: ARSCNView!
     var planes: [OverlayPlane] = []
     
@@ -35,6 +35,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         tap.require(toFail: dobleTap)
         
+        createValve()
         
     }
     func loadValveScene() {
@@ -79,8 +80,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func createShip(hitResult:ARHitTestResult) -> SCNNode{
         guard
             let shipScene = SCNScene(named: "Art.scnassets/ship-2.scn"),
-            let shipNode = shipScene.rootNode.childNode(withName: "ship-2", recursively: false)
-            else {return SCNNode()}
+            let shipNode = shipScene.rootNode.childNode(withName: "ship-2",
+                                                        recursively: false) else {return SCNNode()}
         shipNode.position = SCNVector3(x: hitResult.worldTransform.columns.3.x,
                                        y: hitResult.worldTransform.columns.3.y,
                                        z: hitResult.worldTransform.columns.3.z)
@@ -126,8 +127,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                                          asImpulse: true)
         }
     }
-    
+    func createValve(x: Float = 0, y: Float = 0, z: Float = -1.0) {
+        guard let valveScene = SCNScene(named: "978NSP-200-JD-55M-16IP.dae") else { return }
+        let valveNode = SCNNode()
+        let valveSceneChildNodes = valveScene.rootNode.childNodes
+        
+        for childNode in valveSceneChildNodes {
+            valveNode.addChildNode(childNode)
+        }
+        
+        valveNode.position = SCNVector3(x, y, z)
+        valveNode.scale = SCNVector3(1, 1, 1)
+        sceneView.scene.rootNode.addChildNode(valveNode)
+    }
 }
+
+
 
 //MARK: SceneView delegate
 extension ViewController : ARSCNViewDelegate {
@@ -150,4 +165,5 @@ extension ViewController : ARSCNViewDelegate {
             }
         }
     }
+    
 }
