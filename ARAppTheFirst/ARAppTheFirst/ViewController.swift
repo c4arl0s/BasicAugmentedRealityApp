@@ -12,33 +12,142 @@ import SceneKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet weak var sceneView: ARSCNView!
-    var planes: [OverlayPlane]!
+    var planes: [OverlayPlane] = []
     
     override func viewDidLoad() {
-    super.viewDidLoad()
-    let configuration = ARWorldTrackingConfiguration()
-    configuration.planeDetection = .horizontal
-    sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
-    sceneView.showsStatistics = true
-    sceneView.session.run(configuration,options:[])
-    sceneView.delegate = self
-    
-    
+        super.viewDidLoad()
+        
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        
+        sceneView.showsStatistics = true
+        sceneView.debugOptions = [.showWorldOrigin, .showFeaturePoints]
+        sceneView.delegate = self
+        sceneView.session.run(configuration, options: [])
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        tap.numberOfTapsRequired = 1
+        sceneView.addGestureRecognizer(tap)
+        
+        let dobleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        dobleTap.numberOfTapsRequired = 2
+        sceneView.addGestureRecognizer(dobleTap)
+        
+        tap.require(toFail: dobleTap)
+        
+        
     }
-    // MARK: SceneView Delegate
+    func loadValveScene() {
+        let valveScene = SCNScene(named: "Art.scnassets/978NSP-200-JD-55M-16IP.dae")!
+        sceneView.scene = valveScene
+    }
+    func loadGameScene() {
+        let gameScene = SCNScene(named: "Art.scnassets/sceneGame.scn")!
+        sceneView.scene = gameScene
+    }
+    func createBox(hitResult:ARHitTestResult) -> SCNNode{
+        let box = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
+        let material = SCNMaterial()
+        material.diffuse.contents = UIImage(named: "woodMaterial")
+        box.materials = [material]
+        let boxNode = SCNNode(geometry: box)
+        boxNode.position = SCNVector3(x: hitResult.worldTransform.columns.3.x,
+                                      y: hitResult.worldTransform.columns.3.y + Float(box.height/2) + 0.30,
+                                      z: hitResult.worldTransform.columns.3.z)
+        
+        boxNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
+        boxNode.physicsBody?.isAffectedByGravity = true
+        return boxNode
+    }
+    
+    func createSphere(hitResult: ARHitTestResult, radius:CGFloat, color:UIColor) -> SCNNode{
+        let sphere =  SCNSphere(radius: radius)
+        let material  =  SCNMaterial()
+        material.diffuse.contents = color
+        sphere.materials = [material]
+        let sphereNode  = SCNNode(geometry: sphere)
+        sphereNode.position = SCNVector3(x: hitResult.worldTransform.columns.3.x,
+                                         y: hitResult.worldTransform.columns.3.y + 0.30,
+                                         z: hitResult.worldTransform.columns.3.z)
+        sphereNode.physicsBody = SCNPhysicsBody(type: .kinematic, shape: nil)
+        sphereNode.physicsBody?.isAffectedByGravity = true
+        
+        return sphereNode
+        
+    }
+    
+    func createShip(hitResult:ARHitTestResult) -> SCNNode{
+        guard
+            let shipScene = SCNScene(named: "Art.scnassets/ship-2.scn"),
+            let shipNode = shipScene.rootNode.childNode(withName: "ship-2", recursively: false)
+            else {return SCNNode()}
+        shipNode.position = SCNVector3(x: hitResult.worldTransform.columns.3.x,
+                                       y: hitResult.worldTransform.columns.3.y,
+                                       z: hitResult.worldTransform.columns.3.z)
+        shipNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
+        shipNode.physicsBody?.isAffectedByGravity = true
+        return shipNode
+        
+    }
+    
+    func createShip2(hitResult:ARHitTestResult) -> SCNNode{
+        guard
+            let shipScene = SCNScene(named: "Art.scnassets/ship-2.scn"),
+            let shipNode = shipScene.rootNode.childNode(withName: "ship-2", recursively: false)
+            else {return SCNNode()}
+        shipNode.position = SCNVector3(x: hitResult.worldTransform.columns.3.x,
+                                       y: hitResult.worldTransform.columns.3.y,
+                                       z: hitResult.worldTransform.columns.3.z)
+        shipNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
+        shipNode.physicsBody?.isAffectedByGravity = true
+        return shipNode
+        
+    }
+    
+    @objc func tapped(recognizer:UIGestureRecognizer){
+        print("one tap")
+        let touchLocation = recognizer.location(in: sceneView)
+        let hitResults = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
+        if let hitResult = hitResults.first{
+            let node = createShip(hitResult: hitResult)
+            sceneView.scene.rootNode.addChildNode(node)
+            
+        }
+    }
+    @objc func doubleTapped(recognizer:UIGestureRecognizer){
+        print("twice")
+        let touchLocation = recognizer.location(in: sceneView)
+        let hitResults = sceneView.hitTest(touchLocation, options: [:])
+        if let hitResult = hitResults.first{
+            let node = hitResult.node
+            node.physicsBody?.applyForce(SCNVector3(x: hitResult.worldCoordinates.x * 14.0,
+                                                    y: hitResult.worldCoordinates.y * 14.0,
+                                                    z: hitResult.worldCoordinates.z * 14.0),
+                                         asImpulse: true)
+        }
+    }
+    
+}
+
+//MARK: SceneView delegate
+extension ViewController : ARSCNViewDelegate {
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+        // planeAnchor is passed to constructor OverlayPlay to get a a plane and this setup geometry, material, rotation and physics. it returns a
         let plane = OverlayPlane(planeAnchor: planeAnchor)
         planes.append(plane)
         node.addChildNode(plane)
+        print("A new plane has been discovered")
+        
     }
+    
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         for plane in planes {
-            if planeAnchor.identifier == plane.planeAnchor.identifier {
+            if planeAnchor.identifier == plane.planeAnchor.identifier{
                 plane.update(planeAnchor: planeAnchor)
             }
         }
     }
 }
-
