@@ -2,7 +2,7 @@
 
 Basic Augmented Reality App
 
-# Detecting Planes
+# Detecting Horizontal and Vertical Planes
 
 ![IMG_9644](https://user-images.githubusercontent.com/24994818/64083525-bacc3400-cce6-11e9-9558-385bb7610fea.PNG)
 
